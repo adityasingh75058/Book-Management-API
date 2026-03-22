@@ -9,6 +9,10 @@ services:
       MYSQL_DATABASE: bookdb
     ports:
       - "3307:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
 
   app:
     build: .
@@ -16,5 +20,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
-    restart: always
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://mysql:3306/bookdb
+      DB_USERNAME: root
+      DB_PASSWORD: root

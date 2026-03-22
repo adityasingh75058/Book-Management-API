@@ -4,9 +4,12 @@ import com.example.demo.model.Book;
 import com.example.demo.repository.BookRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class BookService {
+    private static final Logger log = LoggerFactory.getLogger(BookService.class);
     private final BookRepository repository;
     public BookService(BookRepository repository) {
         this.repository = repository;
@@ -24,10 +27,8 @@ public class BookService {
         return repository.findAll();
     }
     public void deleteBook(int id) {
-        if(!repository.existsById(id)) {
-            throw new RuntimeException("Book not found with id " + id);
-        }
         repository.deleteById(id);
+        log.info("Book deleted successfully with id: {}", id);
     }
     public Book updateBook(int id, Book book){
         Book existingBook = repository.findById(id).orElseThrow();
